@@ -26,10 +26,17 @@ var applications = new List<JobApplication>
 
 app.MapGet("/applications", () => applications);
 
-app.MapPost("/applications", (JobApplication application) =>
+app.MapPost("/applications", (CreateJobApplicationRequest request) =>
 {
-    applications.Add(application);
-    return Results.Created($"/applications/{application.Id}", application);
+    var newApplication = new JobApplication
+    (
+        Id: applications.Count > 0 ? applications.Max(a => a.Id) + 1 : 1,
+        Company: request.Company,
+        Role: request.Role,
+        Status: request.Status
+    );
+    applications.Add(newApplication);
+    return Results.Created($"/applications/{newApplication.Id}", newApplication);
 });
 
 app.Run();
