@@ -33,9 +33,23 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
+app.MapGet("/applications", () =>
+{
+    return new List<JobApplication>
+    {
+        new JobApplication(1, "Company", "Role", "Applied"),
+        new JobApplication(2, "Company", "Role", "To Be Submitted"),
+        new JobApplication(3, "Company", "Role", "Received Interview"),
+        new JobApplication(4, "Company", "Role", "Rejected"),
+        new JobApplication(5, "Company", "Role", "Accepted"),
+    };
+});
+
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+
+record JobApplication(int Id, string Company, string Role, string Status); 
