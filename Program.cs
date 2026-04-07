@@ -16,40 +16,20 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+var applications = new List<JobApplication>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+    new(1, "Google", "Backend Engineer", "Applied"),
+    new(1, "Noon", "SWE", "To Be Submitted"),
+    new(1, "Microsoft", "Frontend Engineer", "Received Interview"),
+    new(1, "Meta", "Full Stack Developer", "Accepted")
 };
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapGet("/applications", () => applications);
 
-app.MapGet("/applications", () =>
+app.MapPost("/applications", (JobApplication application) =>
 {
-    return new List<JobApplication>
-    {
-        new JobApplication(1, "Company", "Role", "Applied"),
-        new JobApplication(2, "Company", "Role", "To Be Submitted"),
-        new JobApplication(3, "Company", "Role", "Received Interview"),
-        new JobApplication(4, "Company", "Role", "Rejected"),
-        new JobApplication(5, "Company", "Role", "Accepted"),
-    };
+    applications.Add(application);
+    return Results.Created($"/applications/{application.Id}", application);
 });
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
